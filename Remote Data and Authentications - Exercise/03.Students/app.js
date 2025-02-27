@@ -60,20 +60,15 @@ async function addStudent(e) {
     const firstName = firstNameInput.value.trim();
     const lastName = lastNameInput.value.trim();
     const facultyNumber = facultyNumberInput.value.trim();
+    const grade = gradeInput.value;
 
-    let grade = Number(gradeInput.value);
 
-
-    if (isNaN(grade) || gradeInput.value <= 0) {
-      return;  
+    if (isNaN(grade) || isNaN(facultyNumber)) {
+      return alert('Grade and Faculty Number must be Number');
     }
 
-    
-    if (firstName === "" ||
-        lastName === "" ||
-        facultyNumber === "" ||
-         isNan(facultyNumber))  {
-      return;  
+    if (firstName == '' || lastName == '' || facultyNumber == '' || grade == '') {
+        alert('All fields are required!');
     }
 
     
@@ -84,7 +79,7 @@ async function addStudent(e) {
         firstName: firstName, 
         lastName: lastName,
         facultyNumber: facultyNumber,
-        grade: grade.toFixed(2)}),
+        grade: grade }),
       }).then((res) => res.json())
         .then(() => {
           firstNameInput.value = '';

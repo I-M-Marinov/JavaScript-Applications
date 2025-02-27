@@ -4,7 +4,7 @@ function attachEvents() {
     loadButtonElement.addEventListener('click', loadAllContacts);
 
     const createButtonElement = document.getElementById('btnCreate');
-    createButtonElement.addEventListener('click', createContact);
+    createButtonElement.addEventListener('click', addStudent);
 }
 
 function loadAllContacts(){
@@ -54,7 +54,7 @@ function loadAllContacts(){
     
 }
 
-function createContact(e) {
+function addStudent(e) {
     e.preventDefault();
 
     const baseUrl = 'http://localhost:3030/jsonstore/phonebook';

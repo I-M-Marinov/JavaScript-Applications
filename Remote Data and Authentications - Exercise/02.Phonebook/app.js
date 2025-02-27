@@ -81,6 +81,8 @@ function createContact(e) {
 
       nameInput.value = '';
       phoneInput.value = '';
+
+      loadAllContacts();
   }
 
 

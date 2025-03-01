@@ -64,7 +64,9 @@ async function addBook(e) {
         await fetch(baseUrl, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ author, title  }),
+            body: JSON.stringify({ 
+                author: author, 
+                title: title  }),
         });
 
         titleElement.value = '';
@@ -100,7 +102,7 @@ async function updateBook(id) {
 
         saveButton.addEventListener('click', async (e) => {
             e.preventDefault();
-            await saveUpdatedBook(id);
+            saveUpdatedBook(id);
         });
 
     } catch (err) {

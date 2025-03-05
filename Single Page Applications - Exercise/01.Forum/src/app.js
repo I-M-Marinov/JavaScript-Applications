@@ -1,10 +1,10 @@
 const postsUrl = 'http://localhost:3030/jsonstore/collections/myboard/posts';
 const cancelButtonElement = document.querySelector('.cancel');
 
-// Add event listeners
 document.querySelector("form").addEventListener("submit", createPost);
 cancelButtonElement.addEventListener("click", resetInputs);
-document.querySelector(".topic-container").addEventListener("click", navigateToPost); 
+
+document.querySelector(".topic-container").addEventListener("click", navigateToPost);
 
 function resetInputs(event) {
     event.preventDefault();
@@ -18,11 +18,8 @@ window.addEventListener("DOMContentLoaded", async () => {
     try {
         const response = await fetch(postsUrl);
         const data = await response.json();
-
         const posts = Object.values(data);
-
         const topicContainerElement = document.querySelector('.topic-container');
-
         topicContainerElement.innerHTML = "";
 
         posts.forEach(post => {
@@ -43,13 +40,11 @@ window.addEventListener("DOMContentLoaded", async () => {
                     </div>
                 </div>`;
         });
-
     } catch (error) {
         console.error("Error fetching posts:", error);
     }
 });
 
-// 🟢 Function to create a new post
 function createPost(event) {
     event.preventDefault();
     
@@ -78,7 +73,6 @@ function createPost(event) {
     .then((data) => {
         const topicContainerElement = document.querySelector('.topic-container');
 
-
         topicContainerElement.innerHTML += `
             <div class="topic-name-wrapper">
                 <div class="topic-name">
@@ -96,17 +90,17 @@ function createPost(event) {
                 </div>
             </div>`;
 
-        event.target.reset(); 
-
+        event.target.reset();
     })
     .catch((err) => console.error("Error creating post:", err.message));
 }
 
-// 🟢 Function to navigate to the next page when clicking a post
 function navigateToPost(event) {
-    if (event.target.tagName === "A") {
+    const target = event.target.closest("a.normal");
+    if (target) {
         event.preventDefault();
-        const postId = event.target.getAttribute("data-id");
+        const postId = target.getAttribute("data-id");
+        
         if (postId) {
             localStorage.setItem("selectedPostId", postId);
             window.location.href = "theme-content.html";

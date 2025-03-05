@@ -1,5 +1,6 @@
 const postsUrl = 'http://localhost:3030/jsonstore/collections/myboard/posts';
 const commentDivContainer = document.querySelector(".comment");
+const h2Element = document.querySelector('h2');
 
 window.addEventListener("DOMContentLoaded", async () => {
     try {
@@ -10,12 +11,12 @@ window.addEventListener("DOMContentLoaded", async () => {
 
         const post = await response.json(); 
 
-        console.log(post);
+        h2Element.textContent = post.title;
 
         commentDivContainer.innerHTML = `
             <div class="header">
                 <img src="./static/profile.png" alt="avatar">
-                <p><span>${post.username}</span> posted on <time>${new Date(post.time).toLocaleString()}</time></p>
+                <p><span>${post.username}</span> posted on <time>${post.time}</time></p>
                 <p class="post-content">${post.content}</p>
             </div>`;
       

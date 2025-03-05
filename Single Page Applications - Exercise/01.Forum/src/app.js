@@ -1,6 +1,15 @@
 const postsUrl = 'http://localhost:3030/jsonstore/collections/myboard/posts';
 const cancelButtonElement = document.querySelector('.cancel');
 
+
+const storedData = localStorage.getItem("postsTimes");
+const postsTimes = new Map(JSON.parse(storedData));
+
+if(!storedData){
+    const postsTimes = new Map();
+    localStorage.setItem("postsTimes", JSON.stringify(Array.from(postsTimes))); // save the array of times for posts in the local storage 
+}
+
 document.querySelector("form").addEventListener("submit", createPost);
 cancelButtonElement.addEventListener("click", resetInputs);
 
@@ -21,17 +30,17 @@ window.addEventListener("DOMContentLoaded", async () => {
         const posts = Object.values(data);
         const topicContainerElement = document.querySelector('.topic-container');
         topicContainerElement.innerHTML = "";
-
+    
         posts.forEach(post => {
-            topicContainerElement.innerHTML += `
-                <div class="topic-name-wrapper">
+            topicContainerElement.innerHTML += 
+            `<div class="topic-name-wrapper">
                     <div class="topic-name">
-                        <a href="#" class="normal" data-id="${post._id}"> 
+                        <a href="#" class="normal" dataset.id="${post._id}"> 
                             <h2>${post.title}</h2>
                         </a>
                         <div class="columns">
                             <div>
-                                <p>Date: <time>${post.time}</time></p>
+                                <p>Date: <time>${postsTimes.get(post._id)}</time></p>
                                 <div class="nick-name">
                                     <p>Username: <span>${post.username}</span></p>
                                 </div>
@@ -60,9 +69,10 @@ function createPost(event) {
     const newPost = {
         title: topicName,
         username: username,
-        content: postText,
-        time: new Date()
+        content: postText
     };
+
+
 
     fetch(postsUrl, {
         method: "POST",
@@ -73,15 +83,18 @@ function createPost(event) {
     .then((data) => {
         const topicContainerElement = document.querySelector('.topic-container');
 
-        topicContainerElement.innerHTML += `
-            <div class="topic-name-wrapper">
+        postsTimes.set(data._id, new Date());
+        localStorage.setItem("postsTimes", JSON.stringify(Array.from(postsTimes))); // save the array of times for posts in the local storage 
+
+
+        topicContainerElement.innerHTML += `<div class="topic-name-wrapper">
                 <div class="topic-name">
-                    <a href="#" class="normal" data-id="${data._id}">
+                    <a href="#" class="normal" dataset.id="${data._id}">
                         <h2>${data.title}</h2>
                     </a>
                     <div class="columns">
                         <div>
-                            <p>Date: <time>${data.time}</time></p>
+                            <p>Date: <time>${postsTimes.get(data._id)}</time></p>
                             <div class="nick-name">
                                 <p>Username: <span>${data.username}</span></p>
                             </div>
@@ -99,7 +112,7 @@ function navigateToPost(event) {
     const target = event.target.closest("a.normal");
     if (target) {
         event.preventDefault();
-        const postId = target.getAttribute("data-id");
+        const postId = target.getAttribute("dataset.id");
         
         if (postId) {
             localStorage.setItem("selectedPostId", postId);

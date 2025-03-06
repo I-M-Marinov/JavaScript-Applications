@@ -1,9 +1,18 @@
 const baseUrl = "http://localhost:3030";  // Base URL for API
 const catchesUrl = `${baseUrl}/data/catches`;
 const usersUrl = `${baseUrl}/users`;
+const mainElemement = document.querySelector('main');
+
+const registerElement = document.querySelector("#register-view");
+const loginElement = document.querySelector("#login-view");
+const homeViewElement = document.querySelector("#home-view");
+
+registerElement.style.display = "none";
+loginElement.style.display = "none";
+homeViewElement.style.display = "none";
 
 window.addEventListener("DOMContentLoaded", () => {
-    const userData = JSON.parse(sessionStorage.getItem("userData"));
+    const userData = JSON.parse(localStorage.getItem("userData"));
     
     document.getElementById("logout").addEventListener("click", logout);
     document.querySelector("#register-view form").addEventListener("submit", register);
@@ -53,7 +62,7 @@ async function register(event) {
         }
 
         const data = await response.json();
-        sessionStorage.setItem("userData", JSON.stringify(data));
+        localStorage.setItem("userData", JSON.stringify(data));
         updateNav(data);
     } catch (err) {
         alert(err.message);
@@ -62,6 +71,9 @@ async function register(event) {
 
 async function login(event) {
     event.preventDefault();
+
+    loginElement.style.display = "inline-block";
+    mainElemement.appendChild(loginElement);
     
     const formData = new FormData(event.target);
     const email = formData.get("email");
@@ -79,7 +91,7 @@ async function login(event) {
         }
 
         const data = await response.json();
-        sessionStorage.setItem("userData", JSON.stringify(data));
+        localStorage.setItem("userData", JSON.stringify(data));
         updateNav(data);
     } catch (err) {
         alert(err.message);
@@ -87,7 +99,7 @@ async function login(event) {
 }
 
 async function logout() {
-    const userData = JSON.parse(sessionStorage.getItem("userData"));
+    const userData = JSON.parse(localStorage.getItem("userData"));
 
     if (!userData) return;
 
@@ -97,7 +109,7 @@ async function logout() {
             headers: { "X-Authorization": userData.accessToken }
         });
 
-        sessionStorage.removeItem("userData");
+        localStorage.removeItem("userData");
         updateNav(null);
     } catch (err) {
         alert("Logout failed");
@@ -122,7 +134,7 @@ function displayCatches(catches) {
     const catchesContainer = document.getElementById("catches");
     catchesContainer.innerHTML = "";
 
-    const userData = JSON.parse(sessionStorage.getItem("userData"));
+    const userData = JSON.parse(localStorage.getItem("userData"));
 
     catches.forEach(c => {
         const isOwner = userData && userData._id === c._ownerId;
@@ -158,7 +170,7 @@ function displayCatches(catches) {
 async function createCatch(event) {
     event.preventDefault();
     
-    const userData = JSON.parse(sessionStorage.getItem("userData"));
+    const userData = JSON.parse(localStorage.getItem("userData"));
     if (!userData) return;
 
     const formData = new FormData(event.target);
@@ -192,7 +204,7 @@ async function createCatch(event) {
 }
 
 async function updateCatch(catchId, catchElement) {
-    const userData = JSON.parse(sessionStorage.getItem("userData"));
+    const userData = JSON.parse(localStorage.getItem("userData"));
     if (!userData) return;
 
     const updatedCatch = {
@@ -225,7 +237,7 @@ async function updateCatch(catchId, catchElement) {
 }
 
 async function deleteCatch(catchId) {
-    const userData = JSON.parse(sessionStorage.getItem("userData"));
+    const userData = JSON.parse(localStorage.getItem("userData"));
     if (!userData) return;
 
     if (!confirm("Are you sure you want to delete this catch?")) return;

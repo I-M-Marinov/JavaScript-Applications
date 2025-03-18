@@ -1,261 +1,386 @@
-const baseUrl = "http://localhost:3030";  // Base URL for API
-const catchesUrl = `${baseUrl}/data/catches`;
-const usersUrl = `${baseUrl}/users`;
-const mainElemement = document.querySelector('main');
+const mainHeader = document.querySelector('body header');
+const viewSectionEL = document.getElementById('views');
+const mainEl = document.querySelector('body main');
+const registerPostUrl = 'http://localhost:3030/users/register';
+const logingUserUrl = 'http://localhost:3030/users/login';
+const logoutUserUrl = 'http://localhost:3030/users/logout';
+const baseCaches = 'http://localhost:3030/data/catches';
 
-const registerElement = document.querySelector("#register-view");
-const loginElement = document.querySelector("#login-view");
-const homeViewElement = document.querySelector("#home-view");
+viewSectionEL.remove();
 
-registerElement.style.display = "none";
-loginElement.style.display = "none";
-homeViewElement.style.display = "none";
+function loadNavBar() {
+    const accessToken = localStorage.getItem('accessToken');
+    const email = localStorage.getItem('email');
+    const navEL = document.querySelector('nav');
 
-window.addEventListener("DOMContentLoaded", () => {
-    const userData = JSON.parse(localStorage.getItem("userData"));
-    
-    document.getElementById("logout").addEventListener("click", logout);
-    document.querySelector("#register-view form").addEventListener("submit", register);
-    document.querySelector("#login-view form").addEventListener("submit", login);
-    document.querySelector(".load").addEventListener("click", loadCatches);
-    document.querySelector("#addForm").addEventListener("submit", createCatch);
-    
-    updateNav(userData);
-});
-
-function updateNav(userData) {
-    if (userData) {
-        document.getElementById("guest").style.display = "none";
-        document.getElementById("user").style.display = "inline-block";
-        document.querySelector(".email span").textContent = userData.email;
-        document.querySelector(".add").disabled = false;
-    } else {
-        document.getElementById("guest").style.display = "inline-block";
-        document.getElementById("user").style.display = "none";
-        document.querySelector(".email span").textContent = "guest";
-        document.querySelector(".add").disabled = true;
-    }
-}
-
-async function register(event) {
-    event.preventDefault();
-    
-    const formData = new FormData(event.target);
-    const email = formData.get("email");
-    const password = formData.get("password");
-    const rePass = formData.get("rePass");
-
-    if (password !== rePass) {
-        alert("Passwords do not match!");
-        return;
-    }
-
-    try {
-        const response = await fetch(`${usersUrl}/register`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password })
-        });
-
-        if (!response.ok) {
-            throw new Error("Failed to register");
-        }
-
-        const data = await response.json();
-        localStorage.setItem("userData", JSON.stringify(data));
-        updateNav(data);
-    } catch (err) {
-        alert(err.message);
-    }
-}
-
-async function login(event) {
-    event.preventDefault();
-
-    loginElement.style.display = "inline-block";
-    mainElemement.appendChild(loginElement);
-    
-    const formData = new FormData(event.target);
-    const email = formData.get("email");
-    const password = formData.get("password");
-
-    try {
-        const response = await fetch(`${usersUrl}/login`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password })
-        });
-
-        if (!response.ok) {
-            throw new Error("Invalid credentials");
-        }
-
-        const data = await response.json();
-        localStorage.setItem("userData", JSON.stringify(data));
-        updateNav(data);
-    } catch (err) {
-        alert(err.message);
-    }
-}
-
-async function logout() {
-    const userData = JSON.parse(localStorage.getItem("userData"));
-
-    if (!userData) return;
-
-    try {
-        await fetch(`${usersUrl}/logout`, {
-            method: "GET",
-            headers: { "X-Authorization": userData.accessToken }
-        });
-
-        localStorage.removeItem("userData");
-        updateNav(null);
-    } catch (err) {
-        alert("Logout failed");
-    }
-}
-
-async function loadCatches() {
-    try {
-        const response = await fetch(catchesUrl);
-        if (!response.ok) {
-            throw new Error("Failed to fetch catches");
-        }
-
-        const data = await response.json();
-        displayCatches(data);
-    } catch (err) {
-        alert(err.message);
-    }
-}
-
-function displayCatches(catches) {
-    const catchesContainer = document.getElementById("catches");
-    catchesContainer.innerHTML = "";
-
-    const userData = JSON.parse(localStorage.getItem("userData"));
-
-    catches.forEach(c => {
-        const isOwner = userData && userData._id === c._ownerId;
-        const catchElement = document.createElement("div");
-        catchElement.className = "catch";
-        catchElement.innerHTML = `
-            <label>Angler</label>
-            <input type="text" class="angler" value="${c.angler}" ${!isOwner ? "disabled" : ""}>
-            <label>Weight</label>
-            <input type="number" class="weight" value="${c.weight}" ${!isOwner ? "disabled" : ""}>
-            <label>Species</label>
-            <input type="text" class="species" value="${c.species}" ${!isOwner ? "disabled" : ""}>
-            <label>Location</label>
-            <input type="text" class="location" value="${c.location}" ${!isOwner ? "disabled" : ""}>
-            <label>Bait</label>
-            <input type="text" class="bait" value="${c.bait}" ${!isOwner ? "disabled" : ""}>
-            <label>Capture Time</label>
-            <input type="number" class="captureTime" value="${c.captureTime}" ${!isOwner ? "disabled" : ""}>
-            <button class="update" data-id="${c._id}" ${!isOwner ? "disabled" : ""}>Update</button>
-            <button class="delete" data-id="${c._id}" ${!isOwner ? "disabled" : ""}>Delete</button>
+    if (accessToken) {
+        navEL.innerHTML = `
+        <a id="home" class="active">Home</a>
+        <div id="user">
+        <a id="logout" href="javascript:void(0)">Logout</a>
+        </div>
+        <p class="email">Welcome, <span>${email}</span></p>
         `;
-
-        if (isOwner) {
-            catchElement.querySelector(".update").addEventListener("click", () => updateCatch(c._id, catchElement));
-            catchElement.querySelector(".delete").addEventListener("click", () => deleteCatch(c._id));
-        }
-
-        catchesContainer.appendChild(catchElement);
-    });
-}
-
-
-async function createCatch(event) {
-    event.preventDefault();
-    
-    const userData = JSON.parse(localStorage.getItem("userData"));
-    if (!userData) return;
-
-    const formData = new FormData(event.target);
-    const newCatch = {
-        angler: formData.get("angler"),
-        weight: Number(formData.get("weight")),
-        species: formData.get("species"),
-        location: formData.get("location"),
-        bait: formData.get("bait"),
-        captureTime: Number(formData.get("captureTime"))
-    };
-
-    try {
-        const response = await fetch(catchesUrl, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-Authorization": userData.accessToken
-            },
-            body: JSON.stringify(newCatch)
-        });
-
-        if (!response.ok) {
-            throw new Error("Failed to add catch");
-        }
-
-        loadCatches();
-    } catch (err) {
-        alert(err.message);
+    } else {
+        navEL.innerHTML = `
+        <a id="home" class="active">Home</a>
+        <div id="guest">
+        <a id="login" href="#">Login</a>
+        <a id="register" href="#">Register</a>
+        </div>
+        <p class="email">Welcome, <span>guest</span></p>
+        `;
     }
+    const registerBtn = document.querySelector('#register');
+    const logoutAEl = document.getElementById('logout');
+    const logingAEl = document.getElementById('login');
+    const homeEL = document.getElementById('home');
+
+    registerBtn?.addEventListener('click', register);
+    logoutAEl?.addEventListener('click', logOut);
+    logingAEl?.addEventListener('click', loadingPage);
+    homeEL?.addEventListener('click', loadHomePage);
 }
+function loadingPage() {
+    mainEl.innerHTML = '';
+    const logingViewSection = document.createElement('section');
+    logingViewSection.id = 'login-view';
+    const h2Login = document.createElement('h2');
+    h2Login.textContent = 'Login';
 
-async function updateCatch(catchId, catchElement) {
-    const userData = JSON.parse(localStorage.getItem("userData"));
-    if (!userData) return;
+    const formLogin = document.createElement('form');
+    formLogin.id = 'login';
 
-    const updatedCatch = {
-        angler: catchElement.querySelector(".angler").value,
-        weight: Number(catchElement.querySelector(".weight").value),
-        species: catchElement.querySelector(".species").value,
-        location: catchElement.querySelector(".location").value,
-        bait: catchElement.querySelector(".bait").value,
-        captureTime: Number(catchElement.querySelector(".captureTime").value)
-    };
+    formLogin.innerHTML = `
+          <label>Email: <input type="text" name="email"></label>
+                <label>Password: <input type="password" name="password"></label>
+                <p class="notification"></p>
+                <button>Login</button>
+    `;
+    logingViewSection.appendChild(h2Login);
+    logingViewSection.appendChild(formLogin);
+    mainEl.appendChild(logingViewSection);
 
-    try {
-        const response = await fetch(`${catchesUrl}/${catchId}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                "X-Authorization": userData.accessToken
-            },
-            body: JSON.stringify(updatedCatch)
-        });
+    formLogin.addEventListener('submit', handlerLogin);
 
-        if (!response.ok) {
-            throw new Error("Failed to update catch");
-        }
+    async function handlerLogin(e) {
 
-        loadCatches(); // Refresh the catches list
-    } catch (err) {
-        alert(err.message);
-    }
-}
+        e.preventDefault();
+        try {
 
-async function deleteCatch(catchId) {
-    const userData = JSON.parse(localStorage.getItem("userData"));
-    if (!userData) return;
+            const formData = new FormData(e.currentTarget);
+            const email = formData.get('email');
+            const password = formData.get('password');
+            const notificationPEl = document.querySelector('.notification');
 
-    if (!confirm("Are you sure you want to delete this catch?")) return;
 
-    try {
-        const response = await fetch(`${catchesUrl}/${catchId}`, {
-            method: "DELETE",
-            headers: {
-                "X-Authorization": userData.accessToken
+            if(email === '' || password  === ''){
+                notificationPEl.textContent = 'Please fill out all fields!';
+                return;
             }
-        });
 
-        if (!response.ok) {
-            throw new Error("Failed to delete catch");
+            const response = await fetch(logingUserUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
+            })
+
+            if (!response.ok) {
+                throw new Error('Response is not ok!');
+            }
+            const data = await response.json();
+
+            localStorage.setItem('accessToken', data.accessToken);
+            localStorage.setItem('userId', data._id);
+            localStorage.setItem('email',data.email );
+
+            loadNavBar();
+            loadHomePage();
+
+        } catch (error) {
+            notificationPEl.textContent = 'Error: Incorrect password';
         }
-
-        loadCatches(); // Refresh the list
-    } catch (err) {
-        alert(err.message);
     }
 }
+function register(e) {
+
+    e.preventDefault();
+    mainEl.innerHTML = '';
+
+    const registerSection = document.createElement('section');
+    registerSection.setAttribute('id', 'register-view');
+    const registerBrn = document.createElement('button');
+    registerBrn.textContent = 'Register';
+    const h2EL = document.createElement('h2');
+    h2EL.textContent = 'Register';
+    const registerForm = document.createElement('form');
+    registerForm.setAttribute('id', 'register');
+
+    registerForm.innerHTML = `
+                <label>Email: 
+                <input type="text" name="email"></label>
+                <label>Password: 
+                <input type="password" name="password"></label>
+                <label>Repeat:
+                <input type="password" name="rePass"></label>
+                <p class="notification"></p>
+    `;
+
+    registerSection.appendChild(h2EL);
+    registerForm.appendChild(registerBrn);
+    registerSection.appendChild(registerForm);
+    mainEl.appendChild(registerSection);
+
+    registerBrn.addEventListener('click', (e) => registerConfirm(e));
+
+    async function registerConfirm(e) {
+        e.preventDefault();
+        const notificationEl = document.querySelector('.notification');
+        const formData = new FormData(registerForm);
+        const email = formData.get('email');
+        const password = formData.get('password');
+        const rePassword = formData.get('rePass');
+
+
+        try {
+
+            if(email === '' || password  === '' || rePassword  === ''){
+                notificationEl.textContent = 'Please fill out all fields!';
+                return;
+            }
+
+            if (password !== rePassword) {
+                notificationEl.textContent = 'Passwords do not match!';
+                return;
+            }
+            if (!email.includes('@')) {
+                notificationEl.textContent = 'Invalid email';
+                return;
+            }
+            const response = await fetch(registerPostUrl, {
+                method: 'POST',
+                headers: {
+                    "Content-type": "application/json"
+                },
+                body: JSON.stringify({ email, password })
+            })
+
+            if (!response.ok) {
+                throw new Error('Invalid data');
+            }
+            const data = await response.json();
+
+            localStorage.setItem('accessToken', data.accessToken);
+            localStorage.setItem('userId', data._id);
+            localStorage.setItem('email', data.email);
+
+            loadNavBar();
+            loadHomePage();
+
+        } catch (error) {
+            alert(error);
+        }
+
+    }
+
+
+}
+
+async function logOut() {
+    const accessToken = localStorage.getItem('accessToken')
+
+    try {
+        await fetch(logoutUserUrl, {
+            headers: {
+                'X-Authorization': accessToken
+            }
+        })
+
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('userId');
+
+        loadNavBar();
+        loadHomePage();
+
+    } catch (error) {
+        alert(error);
+    }
+
+
+}
+
+function loadHomePage() {
+
+    mainEl.innerHTML = '';
+    const homeViewSection = document.createElement('section');
+    homeViewSection.id = 'home-view';
+
+    const accessToken = localStorage.getItem('accessToken');
+
+    homeViewSection.innerHTML = `
+     <fieldset id="main">
+                <legend>Catches</legend>
+                <div id="catches">
+                  
+                    </div>
+                </div>
+            </fieldset>
+            <aside>
+                <button class="load">Load</button>
+                <form id="addForm">
+                    <fieldset>
+                        <legend>Add Catch</legend>
+                        <label>Angler</label>
+                        <input type="text" name="angler" class="angler" ${accessToken ? '' : 'disabled'} />
+                        <label>Weight</label>
+                        <input type="number" name="weight" class="weight" ${accessToken ? '' : 'disabled'} />
+                        <label>Species</label>
+                        <input type="text" name="species" class="species"  ${accessToken ? '' : 'disabled'}/>
+                        <label>Location</label>
+                        <input type="text" name="location" class="location"  ${accessToken ? '' : 'disabled'}/>
+                        <label>Bait</label>
+                        <input type="text" name="bait" class="bait"  ${accessToken ? '' : 'disabled'}/>
+                        <label>Capture Time</label>
+                        <input type="number" name="captureTime" class="captureTime" ${accessToken ? '' : 'disabled'} />
+                        <button class="add" ${accessToken ? '' : 'disabled'}>Add</button>
+                    </fieldset>
+                </form>
+            </aside>
+        </section>
+    
+    `
+    mainEl.appendChild(homeViewSection);
+
+    const addFormEl = document.getElementById('addForm');
+    addFormEl.addEventListener('submit', createCatch);
+
+    async function createCatch(e) {
+        e.preventDefault();
+
+        const formData = new FormData(e.currentTarget);
+        const data = Object.fromEntries(formData);
+
+        for (const [key, value] of Object.entries(data)) {
+            if (!value.trim()) {  
+                alert(`The "${key}" field must not be left empty.`);
+                return;  
+            }
+        }
+        
+       try {
+         const response = await fetch(baseCaches, {
+            method: 'POST',
+            headers: {
+                'X-Authorization': accessToken,
+                'Content-Type': "application/json",
+            },
+            body: JSON.stringify(data)
+         })
+
+         const dataCaches = await response.json();
+         document.getElementById("addForm").reset();
+
+         loadCatches();
+       } catch (error) {
+            alert(error);
+       }
+
+    }
+    const loadBtn = document.querySelector('.load');
+    loadBtn.addEventListener('click', loadCatches);
+
+    async function loadCatches(e) {
+        
+        try {
+            const response = await fetch(`${baseCaches}`);
+            const data = await response.json();
+            const allCatches = document.getElementById('catches');
+            allCatches.innerHTML = '';
+            const userId = localStorage.getItem('userId');
+
+            for (const singleCatch of data) {
+
+                const isOwner = userId === singleCatch._ownerId
+                const catchDiv = document.createElement('div');
+                catchDiv.className = 'catch'
+
+                catchDiv.innerHTML = `
+             <label>Angler</label>
+                    <input type="text" class="angler" value="${singleCatch.angler}" ${isOwner ? '' : 'disabled'}>
+                     <label>Weight</label>
+                    <input type="text" class="weight" value="${singleCatch.weight}" ${isOwner ? '' : 'disabled'}>
+                     <label>Species</label>
+                     <input type="text" class="species" value="${singleCatch.species}" ${isOwner ? '' : 'disabled'}>
+                     <label>Location</label>
+                      <input type="text" class="location" value="${singleCatch.location}" ${isOwner ? '' : 'disabled'}>
+                      <label>Bait</label>
+                      <input type="text" class="bait" value="${singleCatch.bait}" ${isOwner ? '' : 'disabled'}>
+                      <label>Capture Time</label>
+                      <input type="number" class="captureTime" value="${singleCatch.captureTime}" ${isOwner ? '' : 'disabled'}>
+                      <button class="update" data-id=${singleCatch._id}" ${isOwner ? '' : 'disabled'}>Update</button >
+                       <button class="delete" data-id="${singleCatch._id}" ${isOwner ? '' : 'disabled'}>Delete</button>
+            `
+                allCatches.appendChild(catchDiv);
+
+                const updateBtn = catchDiv.querySelector('.update');
+                const deleteBtn = catchDiv.querySelector('.delete');
+
+                updateBtn.addEventListener('click', updateCatch);
+                deleteBtn.addEventListener('click', deleteCatch);
+
+                async function updateCatch(e) {
+
+                    const accessToken = localStorage.getItem('accessToken');
+                    const angler = catchDiv.querySelector('.angler').value;
+                    const weight = catchDiv.querySelector('.weight').value;
+                    const species = catchDiv.querySelector('.species').value;
+                    const location = catchDiv.querySelector('.location').value;
+                    const bait = catchDiv.querySelector('.bait').value;
+                    const captureTime = catchDiv.querySelector('.captureTime').value;
+
+                    try {
+                        const response = await fetch(`${baseCaches}/${singleCatch._id}`, {
+                            method: 'PUT',
+                            headers: {
+                                'X-Authorization': accessToken,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ angler, weight, species, location, bait, captureTime })
+                        })
+                        const data = await response.json();
+                        loadCatches();
+
+                    } catch (error) {
+                        alert(error);
+                    }
+
+
+                }
+
+                async function deleteCatch(e) {
+                    const accessToken = localStorage.getItem('accessToken')
+                    try {
+                        await fetch(`${baseCaches}/${singleCatch._id}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'X-Authorization': accessToken
+                            }
+                            
+                        })
+                        loadCatches();
+                    } catch (error) {
+                        alert(error);
+                    }
+                }
+            }
+
+        } catch (error) {
+            alert(error);
+        }
+    }
+}
+
+loadNavBar();
+loadHomePage();

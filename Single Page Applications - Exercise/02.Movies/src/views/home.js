@@ -5,7 +5,7 @@ const section = document.getElementById('home-page');
 const moviesUrl = 'http://localhost:3030/data/movies';
 const catalog = section.querySelector('#movie .card-deck.d-flex.justify-content-center');
 
-// TODO(lcfR): on click on the catalog so it is redirecting to the details page 
+// on click on the catalog so it is redirecting to the details page 
 
 catalog.addEventListener('click', event => {
     if(event.target.tagName === "BUTTON"){

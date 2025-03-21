@@ -1,9 +1,11 @@
 import { renderNavigation } from "../util.js";
+import homePage from "./home.js";
 const logoutUrl = 'http://localhost:3030/users/logout';
 
 export default async function logout(){
 
     await logOutRequest();
+    homePage();
     renderNavigation();
     
 }

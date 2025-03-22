@@ -31,11 +31,10 @@ function createMovieCard(movie){
         <div class="card-body">
             <h4 class="card-title">${movie.title}</h4>
             <a href="/details/${movie._id}">
-             <button data-id="${movie._id}" type="button" class="btn btn-info">Details</button>
             </a>
         </div>
         <div class="card-footer">
-           
+            <button data-id="${movie._id}" type="button" class="btn btn-info">Details</button>
         </div>
     `;
 

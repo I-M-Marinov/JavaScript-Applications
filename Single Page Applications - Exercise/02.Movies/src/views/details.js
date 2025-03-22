@@ -72,29 +72,29 @@ async function likeMovie(e, movieId){
             headers: {"Content-Type": "application/json",
                 "X-Authorization": user.accessToken,
             },
-            body: JSON.stringify({ movieId })
+            body: JSON.stringify({ movieId: movieId })
     })
 
-    detailsPage(movieId);
+    await detailsPage(movieId);
 
 }
 
 
 function createControls(movie, user, likes, ownLike){
 
-    const isOwner = user && user._id === movie._ownerId;
-    const loggedInUser = JSON.parse(localStorage.getItem('user'));
-    const alreadyLiked = true ? ownLike > 0 : false;
+    const isOwner = user?._id === movie._ownerId;
+    const loggedInUser = JSON.parse(localStorage.getItem('user')) || null;
+    const alreadyLiked = ownLike > 0;
 
     const controls = [];
 
     if(isOwner && loggedInUser){
        
-        controls.push(`<a class="btn btn-danger" id=${movie._id} href="#">Delete</a>`);
-        controls.push(`<a class="btn btn-warning" id=${movie._id} href="#">Edit</a>`);
+        controls.push(`<a class="btn btn-danger" id="${movie._id}" href="#">Delete</a>`);
+        controls.push(`<a class="btn btn-warning" id="${movie._id}" href="#">Edit</a>`);
         controls.push(`<span class="enrolled-span">Liked ${likes}</span>`);
 
-    } else if (user && loggedInUser){ 
+    } else if (loggedInUser){ 
 
         if(!alreadyLiked){
 
@@ -104,7 +104,9 @@ function createControls(movie, user, likes, ownLike){
             controls.push(`<span class="enrolled-span">Liked ${likes}</span>`);
         }
     } 
-    return controls.join(" ");
+    console.log(controls);
+    
+    return controls.join("\n");
 }
 
 async function getMovie(id){
@@ -142,8 +144,6 @@ async function getOwnLikes(movieId, user){
     const userId = user._id;
 
     try {
-
-
      const response = await fetch(`${likesUrl}${movieId}%22%20and%20_ownerId%3D%22${userId}%22`);
      const ownLikes = await response.json();
  

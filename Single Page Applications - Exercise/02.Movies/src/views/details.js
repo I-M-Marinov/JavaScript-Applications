@@ -5,23 +5,11 @@ import { editPage } from "./edit.js";
 const section = document.getElementById('movie-example');
 const movieUrl = `http://localhost:3030/data/movies`;
 const allLikesUrl = `http://localhost:3030/data/likes`;
-const likesUrl = `http://localhost:3030/data/likes?where=movieId%3D%22`;
 
 
-export default function detailsPage(id){
+export default async function detailsPage(id){
     showView(section);
-    displayMovie(id);
-}
-
-
-async function displayMovie(id){
-
-    const user = JSON.parse(localStorage.getItem('user'));
-
-    const [movie, likes, ownLike] = await Promise.all([getMovie(id), getLikes(id), getOwnLikes(id, user)])
-
-    section.replaceChildren(createMovieCard(movie, user, likes, ownLike)); 
-
+    await displayMovie(id);
 }
 
 function createMovieCard(movie, user, likes, ownLike){
@@ -51,62 +39,69 @@ function createMovieCard(movie, user, likes, ownLike){
         </div>
     `
 
-    console.log(movie);
+    // if(loggedInUser){
+    //     divElement.querySelector(".col-md-4.text-center").innerHTML += createControls(movie, user, likes, ownLike);
+    // }
     
-    const likeButton = divElement.querySelector('.like-btn');
+    const likeButton = divElement.querySelector('.liking-btn');
 
     if(likeButton){
-        likeButton.addEventListener('click', async (e) => await likeMovie(e, movie._id));
+        likeButton.addEventListener('click', (e) => likeMovie(e, movie._id));
     }
 
     return divElement;
 }
 
-async function likeMovie(e, movieId){
-    e.preventDefault();
-
-    const user = JSON.parse(localStorage.getItem('user'));
-
-    await fetch(allLikesUrl, {
-        method: 'POST',
-            headers: {"Content-Type": "application/json",
-                "X-Authorization": user.accessToken,
-            },
-            body: JSON.stringify({ movieId: movieId })
-    })
-
-    await detailsPage(movieId);
-
-}
-
 
 function createControls(movie, user, likes, ownLike){
 
-    const isOwner = user?._id === movie._ownerId;
-    const loggedInUser = JSON.parse(localStorage.getItem('user')) || null;
-    const alreadyLiked = ownLike > 0;
+    try {
+        const loggedInUser = Boolean(user);
+        const isOwner = user?._id === movie._ownerId;
+        const alreadyLiked = ownLike;
 
-    const controls = [];
+        const controls = [];
 
-    if(isOwner && loggedInUser){
-       
-        controls.push(`<a class="btn btn-danger" id="${movie._id}" href="#">Delete</a>`);
-        controls.push(`<a class="btn btn-warning" id="${movie._id}" href="#">Edit</a>`);
-        controls.push(`<span class="enrolled-span">Liked ${likes}</span>`);
+        // if(loggedInUser && isOwner){
+        
+        //     controls.push(`<a class="btn btn-danger" id="${movie._id}" href="#">Delete</a>`);
+        //     controls.push(`<a class="btn btn-warning" id="${movie._id}" href="#">Edit</a>`);
+        //     controls.push(`<span class="enrolled-span">Liked ${likes}</span>`);
 
-    } else if (loggedInUser){ 
+        // } else if (loggedInUser && !isOwner){ 
 
-        if(!alreadyLiked){
+        //     if(!alreadyLiked){
+                
+        //         controls.push(`<a class="btn btn-primary like-btn" href="#">Like</a>`);
+        //         if(likes > 0){
+        //             controls.push(`<span class="enrolled-span">Liked ${likes}</span>`);
+        //         }
+        //     } else {
+        //         controls.push(`<a class="btn btn-danger" id="${movie._id}" href="#" style="display:none;">Delete</a>`);
+        //         controls.push(`<a class="btn btn-warning" id="${movie._id}" href="#" style="display:none;">Edit</a>`);
+        //         controls.push(`<span class="enrolled-span">Liked ${likes}</span>`);
+        //     }
+        // } else if (!loggedInUser) {
+        //     controls.push(`<a class="btn btn-danger" id="${movie._id}" href="#" style="display:none;">Delete</a>`);
+        //     controls.push(`<a class="btn btn-warning" id="${movie._id}" href="#" style="display:none;">Edit</a>`);
+        //     controls.push(`<a class="btn btn-primary like-btn" href="#" style="display:none;">Like</a>`);
 
-            controls.push(`<a class="btn btn-primary like-btn" href="#">Like</a>`);
-        } else {
+        //     if(likes > 0){
+        //         controls.push(`<span class="enrolled-span">Liked ${likes}</span>`);
+        //     }
+        // }
 
-            controls.push(`<span class="enrolled-span">Liked ${likes}</span>`);
-        }
-    } 
-    console.log(controls);
+         controls.push(`<a class="btn btn-danger delete-btn" id="${movie._id}" href="#" style="display: ${loggedInUser && isOwner ? 'inline-block' : 'none'};">Delete</a>`);
+         controls.push(`<a class="btn btn-warning edit-btn" id="${movie._id}" href="#" style="display: ${loggedInUser && isOwner ? 'inline-block' : 'none'};">Edit</a>`);
+         controls.push(`<a class="btn btn-primary liking-btn" href="#" style="display: ${loggedInUser && !isOwner && !alreadyLiked ? 'inline-block' : 'none'};">Like</a>`);
+         
+         controls.push(`<span class="enrolled-span" style="display: ${loggedInUser ? 'inline-block' : 'none'};">Liked ${likes}</span>`);
     
-    return controls.join("\n");
+    return controls.join(" ");
+
+    } catch (error) {
+        alert(error.message);
+    }
 }
 
 async function getMovie(id){
@@ -124,8 +119,8 @@ async function getMovie(id){
 async function getLikes(movieId){
 
     try {
-     const response = await fetch(`${likesUrl}${movieId}%22&distinct=_ownerId&count`);
-     const likes = await response.json();
+     const response = await fetch(`http://localhost:3030/data/likes?where=movieId%3D%22${movieId}%22&distinct=_ownerId&count `);
+     const likes = await response.json();     
       
      return likes;
 
@@ -134,7 +129,6 @@ async function getLikes(movieId){
     }
  }
 
- 
 async function getOwnLikes(movieId, user){
 
     if(!user){
@@ -144,15 +138,71 @@ async function getOwnLikes(movieId, user){
     const userId = user._id;
 
     try {
-     const response = await fetch(`${likesUrl}${movieId}%22%20and%20_ownerId%3D%22${userId}%22`);
+     const response = await fetch(`http://localhost:3030/data/likes?where=movieId%3D%22${movieId}%22%20and%20_ownerId%3D%22${userId}%22`);
      const ownLikes = await response.json();
- 
-     return ownLikes;
+
+     return ownLikes.length > 0;
 
     } catch (error) {
      alert(error.message);
     }
  }
+
+async function deleteMovie(id){
+
+try {
+    const user = JSON.parse(localStorage.getItem('user'));
+
+    const response = await fetch(`${movieUrl}/${id}`, {
+        method: "DELETE",
+        headers: {"X-Authorization": user.accessToken,}
+    });
+
+    if(!response.ok){
+        const error = response.json();
+        throw new Error(error.message);
+    }
+
+} catch (error) {
+    homePage();
+    alert(error.message);
+}
+}
+
+async function displayMovie(id) {
+    const user = JSON.parse(localStorage.getItem('user'));
+
+    const [movie, likes, ownLike] = await Promise.all([
+        getMovie(id), 
+        getLikes(id), 
+        getOwnLikes(id, user)
+    ]);
+
+    console.log(`${movie}, ${likes} ${ownLike}`);
+    
+
+    section.replaceChildren(createMovieCard(movie, user, likes, ownLike));
+
+    await new Promise(resolve => setTimeout(resolve, 100));
+}
+
+ async function likeMovie(e, movieId){
+    e.preventDefault();
+
+    const user = JSON.parse(localStorage.getItem('user'));
+
+     await fetch(allLikesUrl, {
+        method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                "X-Authorization": user.accessToken,
+            },
+            body: JSON.stringify({ movieId: movieId })
+    })
+
+     detailsPage(movieId);
+
+}
 
  section.addEventListener('click', async (e) => {
     e.preventDefault();
@@ -170,30 +220,10 @@ section.addEventListener('click', async (e) => {
 
     const {id} = e.target;
     if(e.target.tagName === 'A' && e.target.textContent === 'Edit'){
-        editPage(id);
+        await editPage(id);
     }
     
 });
 
 
 
- async function deleteMovie(id){
-
-    try {
-        const user = JSON.parse(localStorage.getItem('user'));
-
-        const response = await fetch(`${movieUrl}/${id}`, {
-            method: "DELETE",
-            headers: {"X-Authorization": user.accessToken,}
-        });
-
-        if(!response.ok){
-            const error = response.json();
-            throw new Error(error.message);
-        }
-
-    } catch (error) {
-        homePage();
-        alert(error.message);
-    }
- }

@@ -7,9 +7,9 @@ const movieUrl = `http://localhost:3030/data/movies`;
 
 
 
-export function editPage(id){
-    showView(section);
-    getMovieData(id);
+export async function editPage(id){
+     showView(section);
+     await getMovieData(id);
 }
 
 async function getMovieData(id){

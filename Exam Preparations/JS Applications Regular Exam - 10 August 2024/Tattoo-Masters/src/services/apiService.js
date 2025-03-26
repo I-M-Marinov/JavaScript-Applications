@@ -22,7 +22,6 @@ async function request(method, url, data){
 
     try {
         const response = await fetch(`${hostUrl}${url}`, options);
-        console.log(response);
 
         if(!response.ok){
             const error = await response.json();
@@ -41,10 +40,6 @@ async function request(method, url, data){
         } else { 
             return response.json();
         }
-
-
-        
-
 
     } catch (error) {
         alert(error.message);

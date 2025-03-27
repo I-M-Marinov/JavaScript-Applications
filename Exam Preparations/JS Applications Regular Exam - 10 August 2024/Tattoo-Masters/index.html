@@ -23,78 +23,10 @@
       <header></header>
       <main>
       
-        <!-- Dashboard page -->
         
-        <!-- Display an h2 if there are no posts -->
-        <h2 id="no-tattoo">Collection is empty, be the first to contribute</h2>
-
-        <!-- Register Page (Only for Guest users) -->
-        <section id="register">
-          <div class="form">
-            <h2>Register</h2>
-            <form class="register-form">
-              <input
-                type="text"
-                name="email"
-                id="register-email"
-                placeholder="email"
-              />
-              <input
-                type="password"
-                name="password"
-                id="register-password"
-                placeholder="password"
-              />
-              <input
-                type="password"
-                name="re-password"
-                id="repeat-password"
-                placeholder="repeat password"
-              />
-              <button type="submit">register</button>
-              <p class="message">Already registered? <a href="/login">Login</a></p>
-            </form>
-          </div>
-        </section>
-
 
         <!-- Create Page (Only for logged-in users) -->
-        <section id="create">
-          <div class="form">
-            <h2>Add tattoo</h2>
-            <form class="create-form">
-              <input
-                type="text"
-                name="type"
-                id="type"
-                placeholder="Tattoo Type"
-              />
-              <input
-                type="text"
-                name="image-url"
-                id="image-url"
-                placeholder="Image URL"
-              />
-              <textarea
-                id="description"
-                name="description"
-                placeholder="Description"
-                rows="2"
-                cols="10"
-              ></textarea>
-              <select id="user-type" name="user-type">
-                <option value="" disabled selected>Select your role</option>
-                <option value="Tattoo Artist">Tattoo Artist</option>
-                <option value="Tattoo Enthusiast">Tattoo Enthusiast</option>
-                <option value="First Time in Tattoo">
-                  First Time in Tattoo
-                </option>
-                <option value="Tattoo Collector">Tattoo Collector</option>
-              </select>
-              <button type="submit">Add tattoo</button>
-            </form>
-          </div>
-        </section>
+        
         <!-- Edit Page (Only for logged-in users) -->
         <section id="edit">
           <div class="form">
@@ -134,36 +66,7 @@
         </section>
 
         <!-- Details page -->
-        <section id="details">
-          <div id="details-wrapper">
-            <img
-              id="details-img"
-              src="./images/japanese dragon.png"
-              alt="example1"
-            />
-            <div>
-              <div id="info-wrapper">
-                <p id="details-type">Japanese Dragon</p>
-                <div id="details-description">
-                  <p id="user-type">Tattoo Artist</p>
-                  <p id="description">
-                    A majestic Japanese dragon wrapped in swirling clouds and
-                    flames, symbolizing strength, wisdom, and protection.
-                  </p>
-                </div>
-                <h3>Like tattoo:<span id="like">0</span></h3>
-                <!--Edit and Delete are only for creator-->
-                <div id="action-buttons">
-                  <a href="/edit" id="edit-btn">Edit</a>
-                  <a href="/delete" id="delete-btn">Delete</a>
-
-                  <!--Bonus - Only for logged-in users ( not authors )-->
-                  <a href="#" id="like-btn">Like</a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+        
       </main>
     </div>
     <footer>

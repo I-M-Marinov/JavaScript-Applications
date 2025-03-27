@@ -1,8 +1,13 @@
 import { html, render  } from '../lib/litHtml.js';
-import { getTattooById } from '../services/tattoesService.js';
+import page  from "page";
+
+import { deleteTattoo, getAllLikes, getLikeByUser, getTattooById, likeTattoo } from '../services/tattoesService.js';
 import { getUserData } from '../util/users.js';
 
-const template = (tattoo, isOwner) => html
+import { confirmDeletionOfTattoo } from '../const/constants.js';
+
+
+const template = (tattoo, isOwner, onDelete, onLike, alreadyLiked, allLikes, isAuthenticated) => html
 `<section id="details">
     <div id="details-wrapper">
         <img
@@ -19,14 +24,20 @@ const template = (tattoo, isOwner) => html
                     ${tattoo.description}
                     </p>
                 </div>
-                <h3>Like tattoo:<span id="like">0</span></h3>
+                <h3>Like tattoo:<span id="like">${allLikes}</span></h3>
+                <div id="action-buttons">
+                ${isAuthenticated && isOwner ? 
+                html`
+                    <a href="/edit/${tattoo._id}" id="edit-btn">Edit</a>
+                    <a id="delete-btn" @click=${onDelete}>Delete</a>
+                ` : ''}
 
-                ${isOwner ? 
-                html`<div id="action-buttons">
-                    <a href="/edit" id="edit-btn">Edit</a>
-                    <a href="/delete" id="delete-btn">Delete</a>
-                    <a href="#" id="like-btn">Like</a>
-                </div>` : ''}
+                 ${isAuthenticated && !isOwner && alreadyLiked === 0 ? 
+                html`
+                    <a id="like-btn" @click=${onLike}>Like</a>
+                ` : ''}
+                
+                </div>
                 </div>
         </div>
     </div>
@@ -39,7 +50,35 @@ export async function detailsTattooView(context){
     const tattoo = await getTattooById(id);
     const user = getUserData();
     const isOwner = user?._id === tattoo?._ownerId;
+    const alreadyLiked = await getLikeByUser(tattoo._id, user?._id);
+    const isAuthenticated = !!user;
+    
+    const allLikes = await getAllLikes(tattoo?._id);
+    console.log(allLikes);
+    
 
-    render(template(tattoo, isOwner));
+    render(template(tattoo, isOwner, () => handleDelete(id), () => handleLike(id), alreadyLiked, allLikes, isAuthenticated));
+}
+
+async function handleDelete(id){
+
+    const choice = confirm(confirmDeletionOfTattoo);
+
+    if(!choice){
+        return;
+    }
+
+    await deleteTattoo(id);
+
+    page.redirect('/dashboard');
+
+}
+
+async function handleLike(tattooId){
+    
+    await likeTattoo({"tattooId": tattooId});
+
+    page.redirect(`/dashboard/${tattooId}`);
+
 }
 

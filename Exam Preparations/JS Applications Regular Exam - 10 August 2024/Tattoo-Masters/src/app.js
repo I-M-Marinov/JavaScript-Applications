@@ -20,7 +20,7 @@ page('/logout', logoutView);
 
 page('/dashboard', dashboardView);
 page('/dashboard/:id', detailsTattooView);
-page('/edit', editTattooView);
+page('/edit/:id', editTattooView);
 page('/create', createTattooView);
 
 page();

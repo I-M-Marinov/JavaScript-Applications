@@ -2,6 +2,8 @@ import { html, render  } from '../lib/litHtml.js';
 import { page } from "./../lib/page.js";
 
 import { login } from '../services/userService.js';
+import { showError } from "./../util/notifications.js";
+
 
 
 const template = (onSubmit) => html`
@@ -32,7 +34,8 @@ async function handleLoginForm(e){
     const password = formData.get('password');
 
     if(!email || !password){
-        return alert('All fields are required!');
+        showError('All fields are required!');
+        return;
     }
 
     await login(email, password);

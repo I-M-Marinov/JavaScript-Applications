@@ -2,6 +2,7 @@ import { html, render  } from '../lib/litHtml.js';
 import page  from "page";
 
 import { addDrone } from '../services/dronesService.js';
+import { showError } from '../util/notifications.js';
 
 
 const template = (onSubmit) => html
@@ -43,7 +44,7 @@ async function addDroneFormHandler(e){
     const description = formData.get('description');
 
     if(!model || !imageUrl || !price || !condition || !weight || !phone || !description){
-        return alert("All fields are required!");
+        return showError("All fields are required!");
     }
 
     await addDrone({model, imageUrl, price, condition, weight, phone, description});

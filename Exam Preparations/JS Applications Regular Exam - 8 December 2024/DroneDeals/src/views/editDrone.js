@@ -1,6 +1,7 @@
 import { html, render  } from '../lib/litHtml.js';
 import { getDroneById, editDrone } from '../services/dronesService.js';
 import page  from "page";
+import { showError } from '../util/notifications.js';
 
 const template = (drone, onSubmit) => html
 `
@@ -44,7 +45,7 @@ async function editDroneFormHandler(e, id){
     const description = formData.get('description');
 
     if(!model || !imageUrl || !price || !condition || !weight || !phone || !description){
-        return alert("All fields are required!");
+        return showError("All fields are required!");
     }
 
     await editDrone(id, {model, imageUrl, price, condition, weight, phone, description});

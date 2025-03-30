@@ -14,6 +14,7 @@ import { droneDetailsView } from "./views/droneDetails.js";
 
 
 page(renderNavigation);
+
 page('/', homeView);
 page('/login', loginView);
 page('/register', registerView);

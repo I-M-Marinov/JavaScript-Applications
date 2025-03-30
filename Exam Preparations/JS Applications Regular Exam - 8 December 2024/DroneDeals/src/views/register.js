@@ -2,6 +2,7 @@ import { html, render  } from "./../lib/litHtml.js";
 import { page } from "./../lib/page.js";
 
 import { register } from '../services/userService.js';
+import { showError } from "../util/notifications.js";
 
 const template = (onSubmit) => html`
         <section id="register">
@@ -31,11 +32,11 @@ const password = formData.get('password');
 const rePass = formData.get('re-password');
 
 if(!email || !password || !rePass){
-    return alert("All fields are required!");
+    return showError("All fields are required!");
 }
 
 if(password !== rePass){
-    return alert("Passwords don't match!");
+    return showError("Passwords don't match!");
 }
 
 await register(email, password);

@@ -4,43 +4,6 @@ import page  from "page";
 import { deleteDrone, getDroneById } from '../services/dronesService.js';
 import { getUserData } from '../util/users.js';
 
-
-// const template = (tattoo, isOwner, onDelete, onLike, alreadyLiked, allLikes, isAuthenticated) => html
-// `<section id="details">
-//     <div id="details-wrapper">
-//         <img
-//             id="details-img"
-//                 src="${tattoo.imageUrl}"
-//             alt="example1"
-//         />
-//         <div>
-//             <div id="info-wrapper">
-//                 <p id="details-type">${tattoo.type}</p>
-//                 <div id="details-description">
-//                     <p id="user-type">${tattoo.userType}</p>
-//                     <p id="description">
-//                     ${tattoo.description}
-//                     </p>
-//                 </div>
-//                 <h3>Like tattoo:<span id="like">${allLikes}</span></h3>
-//                 <div id="action-buttons">
-//                 ${isAuthenticated && isOwner ? 
-//                 html`
-//                     <a href="/edit/${tattoo._id}" id="edit-btn">Edit</a>
-//                     <a id="delete-btn" @click=${onDelete}>Delete</a>
-//                 ` : ''}
-
-//                  ${isAuthenticated && !isOwner && alreadyLiked === 0 ? 
-//                 html`
-//                     <a id="like-btn" @click=${onLike}>Like</a>
-//                 ` : ''}
-                
-//                 </div>
-//                 </div>
-//         </div>
-//     </div>
-// </section>`;
-
 const template = (drone, isOwner, onDelete,  isAuthenticated) => html
 `<section id="details">
         <div id="details-wrapper">

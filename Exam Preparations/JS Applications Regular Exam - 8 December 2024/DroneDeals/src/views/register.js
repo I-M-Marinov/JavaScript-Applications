@@ -35,7 +35,7 @@ if(!email || !password || !rePass){
 }
 
 if(password !== rePass){
-    return alert("The passwords should match!");
+    return alert("Passwords don't match!");
 }
 
 await register(email, password);

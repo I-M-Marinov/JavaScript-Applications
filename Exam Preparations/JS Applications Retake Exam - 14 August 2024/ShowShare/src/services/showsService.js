@@ -9,9 +9,10 @@ export async function getShowById(id) {
 }
 
 export async function createShow(data) {
-  const { ["image-url"]: imageUrl, ...otherProps } = data;
-  return post("/data/shows", {imageUrl, ...otherProps});
+  const { ["image-url"]: imageUrl, ["more-info"]: moreInfo, ...otherProps } = data;
+  return post("/data/shows", { imageUrl, moreInfo, ...otherProps });
 }
+
 
 export async function editShow(id, data) {
   return put(`/data/shows/${id}`, data);

@@ -1,0 +1,101 @@
+#details-wrapper {
+  display: flex;
+  flex-direction: column;
+  background-image: url('../images/envelope.webp');
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  align-items: center;
+  justify-content: center;
+}
+
+#details {
+  scale: 0.75;
+  margin-top: -70px;
+}
+
+#details-name{
+  background-color: #363131b2;
+  border-radius: 10px;
+  font-size: 30px;
+  text-shadow: 2px 2px black;
+}
+#details-wrapper img {
+  display: block;
+  margin: auto;
+  height: 34vh;
+  width: auto;
+border: 5px dashed rgba(2, 2, 2, 0.815);
+margin-top: 20px;
+}
+
+#details-category {
+  text-align: center;
+  font-weight: bold;
+  font-size: 20px;
+}
+#details-year-description {
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+background-color: #363131b2;
+padding: 0;
+border-radius: 10px;
+}
+
+#details-category {
+  font-size: 22px;
+}
+
+h4 {
+  text-align: center;
+   color: rgb(243,225,187,255);
+  text-shadow: 1px 1px rgb(0, 0, 0);
+}
+
+p {
+  text-align: center;
+  font-size:22px;
+   color: rgb(243,225,187,255);
+  text-shadow: 1px 1px rgb(0, 0, 0);
+  width: 80vw;
+}
+
+span {
+  font-size: 32px;
+  color: rgb(240, 203, 82);
+  text-shadow: 1px 1px rgb(0, 0, 0);
+}
+
+#action-buttons {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 5px;
+
+
+}
+
+#action-buttons a {
+  text-decoration: none;
+  margin: auto 50px;
+  margin-bottom: 10px;
+  font-size: 21px;
+  width: 130px;
+  text-align: center;
+  color: rgb(243,225,187,255);
+  background: rgb(29, 28, 28);
+  border-radius: 5px;
+}
+
+#action-buttons a:hover {
+  background: #bd2c2c;
+}
+
+#details h3 {
+  text-align: center;
+  letter-spacing: 6px;
+  color: rgb(243,225,187,255);
+  text-shadow: 1px 1px rgb(0, 0, 0);
+}

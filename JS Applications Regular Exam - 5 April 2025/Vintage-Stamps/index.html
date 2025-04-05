@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=\, initial-scale=1.0" />
+  <link rel="stylesheet" href="./styles/styles.css" />
+  <title>Vintage Stamps</title>
+</head>
+
+<body>
+  <div id="wrapper">
+    <header>
+      <!-- Navigation -->
+      <a id="logo" href="#"><img id="logo-img" src="./images/logo.webp" alt="logo" />
+      </a>
+      <nav>
+        <div>
+          <a href="#">Collection</a>
+        </div>
+
+        <!-- Logged-in users -->
+        <div class="user">
+          <a href="#">Add Stamp</a>
+          <a href="#">Logout</a>
+        </div>
+
+        <!-- Guest users -->
+        <div class="guest">
+          <a href="#">Login</a>
+          <a href="#">Register</a>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <!-- Home page -->
+
+      <section id="home">
+        <h1>
+          Explore a world of rare and historic vintage stamps, where collectors connect to exchange knowledge and unique
+          finds. Preserve the art of philately while discovering hidden gems from different eras and regions.
+        </h1>
+        <img id="home-img" src="./images/logo.webp" alt="home-img" />
+      </section>
+
+      <!-- Dashboard page -->
+      <h2>Collection</h2>
+      <section id="collection">
+        <!-- Display a div with information about every post (if any)-->
+        <div class="stamp">
+          <img src="./images/Austria 1858.webp" alt="example1" />
+          <div class="stamp-info">
+            <h3 class="name">KK Blue</h3>
+            <p class="year-description">
+              Year of oldest stamps - <span class="year">1858</span> 
+            </p>
+            <a class="learn-more-btn" href="#">Learn More</a>
+          </div>
+        </div>
+        <div class="stamp">
+          <img src="./images/France 1858.webp" alt="example2" />
+          <div class="stamp-info">
+            <h3 class="name">Bordeaux 40c</h3>
+            <p class="year-description">
+              Year of oldest stamps - <span class="year">1870</span> 
+            </p>
+            <a class="learn-more-btn" href="">Learn More</a>
+          </div>
+        </div>
+        <div class="stamp">
+          <img src="./images/Austria 1945.webp" alt="example3" />
+          <div class="stamp-info">
+            <h3 class="name">Losenstein 5Pf</h3>
+            <p class="year-description">
+              Year of oldest stamps - <span class="year">1945</span> 
+            </p>
+            <a class="learn-more-btn" href="#">Learn More</a>
+          </div>
+        </div>
+         <!-- Display an h2 if there are no posts -->
+      <h2 id="no-stamp">No Stamps Added.</h2>
+      </section>
+     
+
+      <!-- Register Page (Only for Guest users) -->
+      <section id="register">
+        <div class="form">
+          <h2>Register</h2>
+          <form class="register-form">
+            <input type="text" name="email" id="register-email" placeholder="email" />
+            <input type="password" name="password" id="register-password" placeholder="password" />
+            <input type="password" name="re-password" id="repeat-password" placeholder="repeat password" />
+            <button type="submit">register</button>
+            <p class="message">Already registered? <a href="#">Login</a></p>
+          </form>
+        </div>
+      </section>
+
+      <!-- Login Page (Only for Guest users) -->
+      <section id="login">
+        <div class="form">
+          <h2>Login</h2>
+          <form class="login-form">
+            <input type="text" name="email" id="email" placeholder="email" />
+            <input type="password" name="password" id="password" placeholder="password" />
+            <button type="submit">login</button>
+            <p class="message">
+              Not registered? <a href="#">Create an account</a>
+            </p>
+          </form>
+        </div>
+      </section>
+
+      <!-- Create Page (Only for logged-in users) -->
+      <section id="create">
+        <div class="form">
+          <h2>Add Post Stamp</h2>
+          <form class="create-form">
+            <input type="text" name="name-input" id="name-input" placeholder="Stamp Name" />
+            <input type="text" name="image-url-input" id="image-url-input" placeholder="Image URL" />
+            <input type="number" id="year-input" name="year-input" placeholder="year" />
+            <textarea id="more-info-textarea" name="more-info-textarea" placeholder="More Info" rows="8" cols="10"></textarea>
+            <button type="submit">Add Stamp</button>
+          </form>
+        </div>
+      </section>
+      <!-- Edit Page (Only for logged-in users) -->
+      <section id="edit">
+        <div class="form">
+          <h2>Edit Post Stamp</h2>
+          <form class="edit-form">
+            <input type="text" name="name-input" id="name" placeholder="Stamp Name" />
+            <input type="text" name="image-url-input" id="image-url" placeholder="Image URL" />
+            <input type="number" id="year-input" name="year-input" placeholder="Year"  />
+            <textarea id="more-info" name="more-info-textarea" placeholder="More Info" rows="8" cols="10"></textarea>
+            <button type="submit">Edit</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- Details page -->
+      <section id="details">
+        <div id="details-wrapper">
+          <img id="details-img" src="./images/France 1858.webp" alt="example1" />
+          <div>
+            <p id="details-name">Bordeaux 40c</p>
+            <div id="info-wrapper">
+              <div id="details-year-description">
+                <p id="year-description">
+                  Year of oldest stamps - <span id="year">1870</span> 
+                </p>
+                <p id="more-info">
+                  France 1870 - Yvert & Tellier No. 48 - Bordeaux Issue - 40 centimes Orange
+                  This is a 40 centimes orange stamp from the Bordeaux issue, released during the Franco-Prussian War in
+                  1870. Printed under emergency conditions, Bordeaux issue stamps are known for their crude yet
+                  historically significant production.
+                  Mint Condition (new), with original gum.
+                </p>
+              </div>
+            </div>
+            <h3>Stamp total likes:<span id="likes">0</span></h3>
+
+            <!--Edit and Delete are only for creator-->
+            <div id="action-buttons">
+              <a href="#" id="edit-btn">Edit</a>
+              <a href="#" id="delete-btn">Delete</a>
+
+              <!--Bonus - Only for logged-in users ( not authors )-->
+              <a href="#" id="like-btn">Like</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <footer>
+    <p>Vintage Stamps - JS Application Regular Exam @ SoftUni</p>
+  </footer>
+</body>
+
+</html>

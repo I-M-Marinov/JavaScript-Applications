@@ -1,0 +1,116 @@
+@import url('https://fonts.googleapis.com/css2?family=Pirata+One&display=swap');
+
+#collection {
+  display: flex;
+  align-items: center;
+  justify-content:center ;
+  flex-wrap: wrap;
+  font-family: "Pirata One", serif;
+}
+ h2 {
+  text-align: center;
+  font-size: 50px;
+  color: rgb(243,225,187,255);
+  text-shadow: 2px 2px black;
+  margin-top: -74px;
+}
+
+#no-stamp{
+  margin-top: 20px;
+}
+h3{
+  font-size: 28px;
+  font-family: "Pirata One", serif;
+  margin: 0;
+  padding: 0;
+}
+
+.stamp {
+  font-family: "Pirata One", serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 27vw;
+  height: 70vh;
+  padding-bottom: 1rem;
+  margin: 10px auto;
+  background-image: url(../images/card.webp);
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.stamp img {
+border: 2px solid black;
+width: 16vw;
+box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+.stamp-info{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 12vw;
+}
+
+.stamp .name {
+  color: rgb(243,225,187,255);
+  text-shadow: 1px 1px rgb(0, 0, 0);
+
+}
+
+.learn-more-btn {
+  margin-top: 4px;
+  text-decoration: none;
+  font-size: 21px;
+  width: 160px;
+  border-radius: 3px;
+  text-align: center;
+  color: rgb(243,225,187,255);
+  background: rgb(29, 28, 28);
+  text-shadow: 1px 1px black;
+}
+.learn-more-btn:hover {
+  background: #b9b988;
+  color: black;
+  text-shadow: none;
+}
+.stamp p {
+ width: 24vw;
+font-size: 18px;
+font-weight: 300;
+  text-align: center;
+  color: rgb(255, 255, 255);
+  text-shadow: 2px 2px rgb(62, 62, 61);
+  margin: 0;
+  background-color: #00000059;
+  border-radius: 10px;
+}
+
+@media (max-width: 1000px) {
+  h2 {
+    font-size: 25px; 
+  }
+
+  .stamp {
+    width: 40%; 
+  }
+
+  .stamp-info {
+    width: 40%;
+  }
+
+  .learn-more-btn {
+    font-size: 12px; 
+    width: 50px;
+  }
+
+  .stamp p {
+    font-size: 9px; 
+  }
+
+  .stamp img {
+    width: 25vh;
+  }
+}
